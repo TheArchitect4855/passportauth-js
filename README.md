@@ -5,7 +5,7 @@ This is a JavaScript library to use Passport authentication on the frontend. It 
 ## Installation
 
 ```html
-<script src="TODO"></script>
+<script src="https://raw.githubusercontent.com/TheArchitect4855/passportauth-js/master/index.js"></script>
 ```
 
 While Passport is in its alpha testing stage, there will not be minified code available.
