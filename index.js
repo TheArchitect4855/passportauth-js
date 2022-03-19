@@ -55,9 +55,9 @@ class Passport {
 		if(cached != undefined) return cached;
 
 		const raw = await this.getRaw(name);
-		const value = Passport.fromHex(raw);
+		const value = JSON.parse(Passport.fromHex(raw));
 		this.#data[name] = value;
-		return JSON.parse(value);
+		return value;
 	}
 
 	/**
