@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<hmtl>
+	<head>
+		<title>Passport JS Test</title>
+	</head>
+	<body>
+		<h1>Index - Account Info</h1>
+		<p>UID: <span id="uid">Loading...</span></p>
+	
+		<form id="userdata-form" style="margin: 2em;">
+			<label for="key-input">Key: </label>
+			<br />
+			<input type="text" id="key-input" required />
+			<br />
+
+			<label for="data-input">Data:</label>
+			<br />
+			<textarea id="data-input"></textarea>
+			<br />
+
+			<button type="submit">Add</button>
+		</form>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody id="data-table">
+			</tbody>
+		</table>
+		<button onclick="javascript:getData()">Get</button>
+		<button onclick="javascript:setData()">Set</button>
+		<button id="logout-button">Log Out</button>
+
+		<script src="../index.js"></script>
+		<script>
+			const keys = {};
+			const passport = new Passport();
+			checkLogin();
+
+			document.getElementById("logout-button")
+				.onclick = async () => {
+					await passport.logout();
+					location.replace("/login.html");
+				};
+
+			document.getElementById("userdata-form")
+				.onsubmit = async (e) => {
+					e.preventDefault();
+					const name = document.getElementById("key-input").value;
+					const value = document.getElementById("data-input").value;
+					keys[name] = true;
+					await passport.add(name, value);
+					generateDataTable();
+				};
+
+			async function checkLogin() {
+				await passport.load();
+				if(passport.uid == null) {
+					// Not logged in
+					location.replace("/login.html");
+				} else {
+					document.getElementById("uid").innerText = passport.uid;
+				}
+			}
+
+			async function generateDataTable() {
+				let html = "";
+				for(const key in keys) {
+					if(!keys[key]) continue;
+
+					let value = "<span style='color: red;'>Key does not exist</span>";
+					try {
+						value = await passport.get(key);
+					} catch(e) {
+						console.error(e);
+					}
+
+					html += `
+						<tr>
+							<td>${key}</td>
+							<td>${value}</td>
+							<td><button onclick="javascript:deleteData('${key}')">Delete</button></td>
+						</tr>
+					`;
+				}
+
+				document.getElementById("data-table").innerHTML = html;
+			}
+
+			function getData() {
+				const name = document.getElementById("key-input").value;
+				keys[name] = true;
+				generateDataTable();
+			}
+
+			async function setData() {
+				const name = document.getElementById("key-input").value;
+				const value = document.getElementById("data-input").value;
+				keys[name] = true;
+				await passport.set(name, value);
+				generateDataTable();
+			}
+
+			async function deleteData(name) {
+				try {
+					await passport.remove(name);
+					keys[name] = false;
+					generateDataTable();
+				} catch(e) {
+					console.error(e);
+				}
+			}
+		</script>
+	</body>
+</hmtl>

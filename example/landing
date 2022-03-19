@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<hmtl>
+	<head>
+		<title>Passport JS Test - Landing</title>
+	</head>
+	<body>
+		<p>Logging you in...</p>
+	
+		<script src="../index.js"></script>
+		<script>
+			Passport.doLanding("/index.html");
+		</script>
+	</body>
+</hmtl>
